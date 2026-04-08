@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const difficulties = await getCollection('difficulties');
+  return difficulties.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const allEntries = await getCollection('difficulties');
+const sorted = allEntries.sort((a, b) => a.data.order - b.data.order);
+const currentIndex = sorted.findIndex((e) => e.id === entry.id);
+const prev = currentIndex > 0 ? sorted[currentIndex - 1] : null;
+const next = currentIndex < sorted.length - 1 ? sorted[currentIndex + 1] : null;
+
+const categoryColors: Record<string, string> = {
+  'Old Testament': 'bg-amber-100 text-amber-800',
+  'Gospels': 'bg-blue-100 text-blue-800',
+  'Epistles': 'bg-purple-100 text-purple-800',
+  'Old Testament / Theology': 'bg-amber-100 text-amber-800',
+  'Prophets': 'bg-emerald-100 text-emerald-800',
+  'Gospels / Textual Criticism': 'bg-blue-100 text-blue-800',
+  'Acts / Theology': 'bg-indigo-100 text-indigo-800',
+};
+
+const colorClass = categoryColors[entry.data.category] || 'bg-gray-100 text-gray-800';
+---
+
+<BaseLayout title={entry.data.title} description={entry.data.shortDesc}>
+  <article class="max-w-3xl mx-auto px-4 py-10">
+    <a href="/" class="font-sans text-sm text-gold hover:text-gold-light transition-colors mb-6 inline-flex items-center gap-1">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      All Entries
+    </a>
+
+    <header class="mb-8">
+      <div class="flex items-center gap-3 mb-3">
+        <span class="font-sans text-3xl font-bold text-gold/30">
+          {String(entry.data.order).padStart(2, '0')}
+        </span>
+        <span class={`font-sans text-xs font-medium px-2.5 py-1 rounded-full ${colorClass}`}>
+          {entry.data.category}
+        </span>
+      </div>
+      <h1 class="font-sans font-bold text-3xl md:text-4xl text-ink leading-tight mb-2">
+        {entry.data.title}
+      </h1>
+      <p class="font-sans text-base text-ink-light">{entry.data.passages}</p>
+    </header>
+
+    <div class="entry-content prose prose-lg max-w-none
+      prose-headings:font-sans prose-headings:text-ink
+      prose-h2:text-2xl prose-h2:font-bold prose-h2:mt-10 prose-h2:mb-4
+      prose-h3:text-xl prose-h3:font-semibold prose-h3:mt-8 prose-h3:mb-3
+      prose-h4:text-base prose-h4:font-bold prose-h4:mt-6 prose-h4:mb-2
+      prose-p:text-ink prose-p:leading-relaxed
+      prose-strong:text-ink prose-strong:font-semibold
+      prose-em:text-ink-light
+      prose-li:text-ink prose-li:leading-relaxed
+      prose-ul:my-3
+      prose-hr:border-gold/20 prose-hr:my-10
+      prose-a:text-gold prose-a:no-underline hover:prose-a:underline
+    ">
+      <Content />
+    </div>
+
+    <nav class="mt-14 pt-8 border-t border-gold/20 flex justify-between items-center gap-4 font-sans text-sm">
+      {prev ? (
+        <a href={`/${prev.id}`} class="text-gold hover:text-gold-light transition-colors flex items-center gap-1 min-w-0">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="m15 18-6-6 6-6"/></svg>
+          <span class="truncate">{prev.data.shortTitle || prev.data.title}</span>
+        </a>
+      ) : <span />}
+      {next ? (
+        <a href={`/${next.id}`} class="text-gold hover:text-gold-light transition-colors flex items-center gap-1 min-w-0 text-right ml-auto">
+          <span class="truncate">{next.data.shortTitle || next.data.title}</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0"><path d="m9 18 6-6-6-6"/></svg>
+        </a>
+      ) : <span />}
+    </nav>
+  </article>
+</BaseLayout>
+
+<style>
+  /* Style the "The Difficulty" section as a callout */
+  .entry-content :global(h2:first-of-type + p) {
+    background: var(--color-gold-pale);
+    border-left: 4px solid var(--color-gold);
+    padding: 1rem 1.25rem;
+    border-radius: 0 0.5rem 0.5rem 0;
+    margin-top: 0.75rem;
+  }
+
+  /* Style response tradition/summary metadata */
+  .entry-content :global(h3 + p > strong:first-child) {
+    color: var(--color-ink-light);
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+  }
+
+  /* Strengths heading */
+  .entry-content :global(h4:nth-of-type(odd)) {
+    color: var(--color-green-muted);
+  }
+
+  /* Weaknesses heading */
+  .entry-content :global(h4:nth-of-type(even)) {
+    color: var(--color-red-muted);
+  }
+
+  /* Further Reading heading */
+  .entry-content :global(h4:last-of-type) {
+    color: var(--color-blue-muted);
+  }
+</style>

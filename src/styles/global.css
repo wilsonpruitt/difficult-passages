@@ -1,0 +1,18 @@
+@import "tailwindcss";
+@plugin "@tailwindcss/typography";
+
+@theme {
+  --color-parchment: #FAF7F2;
+  --color-parchment-dark: #F0EBE1;
+  --color-ink: #2C2418;
+  --color-ink-light: #5C4D3C;
+  --color-gold: #8B6914;
+  --color-gold-light: #C49B2A;
+  --color-gold-pale: #F5EDD4;
+  --color-red-muted: #9B4D4D;
+  --color-green-muted: #4D7A5C;
+  --color-blue-muted: #4D6B8B;
+
+  --font-serif: "Crimson Pro", Georgia, serif;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+}

@@ -1,0 +1,55 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Historical responses to the Bible's hardest questions — what Christians have said, and why" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <title>{title} | Difficult Passages</title>
+  </head>
+  <body class="bg-parchment text-ink font-serif min-h-screen flex flex-col antialiased">
+    <header class="border-b border-gold/20 bg-parchment/80 backdrop-blur-sm sticky top-0 z-50">
+      <div class="max-w-4xl mx-auto px-4 py-4 flex items-baseline justify-between">
+        <a href="/" class="group">
+          <h1 class="font-sans font-bold text-lg tracking-tight text-ink group-hover:text-gold transition-colors">
+            Difficult Passages
+          </h1>
+          <p class="text-xs text-ink-light font-sans">A Pastoral Reference</p>
+        </a>
+        <nav class="font-sans text-sm text-ink-light">
+          <a href="/" class="hover:text-gold transition-colors">All Entries</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="flex-1">
+      <slot />
+    </main>
+
+    <footer class="border-t border-gold/20 py-8 mt-12">
+      <div class="max-w-4xl mx-auto px-4 text-center font-sans text-sm text-ink-light">
+        <p>A pastoral resource for Covenant Austin</p>
+        <p class="mt-1 text-xs">Not exhaustive &middot; Always growing</p>
+      </div>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  @import "../styles/global.css";
+</style>

@@ -1,0 +1,52 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import DifficultyCard from '../components/DifficultyCard.astro';
+import CategoryFilter from '../components/CategoryFilter.astro';
+import { getCollection } from 'astro:content';
+
+const difficulties = await getCollection('difficulties');
+const sorted = difficulties.sort((a, b) => a.data.order - b.data.order);
+
+const categories = [...new Set(sorted.map((d) => d.data.category))];
+
+function countResponses(body: string): number {
+  return (body.match(/^### /gm) || []).length;
+}
+---
+
+<BaseLayout title="All Entries">
+  <div class="max-w-4xl mx-auto px-4 py-10">
+    <div class="mb-10">
+      <h2 class="font-sans font-bold text-3xl text-ink mb-3">Difficult Passages</h2>
+      <p class="text-lg text-ink-light leading-relaxed max-w-2xl">
+        Historical responses to the Bible's hardest questions — what Christians have said, and why.
+        Each entry presents the difficulty, then maps the major scholarly and pastoral responses with
+        their strengths and weaknesses.
+      </p>
+    </div>
+
+    <div class="mb-8">
+      <CategoryFilter categories={categories} />
+    </div>
+
+    <div class="grid gap-4" id="entries-grid">
+      {sorted.map((entry) => (
+        <div data-category-card={entry.data.category}>
+          <DifficultyCard
+            order={entry.data.order}
+            title={entry.data.title}
+            passages={entry.data.passages}
+            shortDesc={entry.data.shortDesc}
+            category={entry.data.category}
+            slug={entry.id}
+            responseCount={countResponses(entry.body || '')}
+          />
+        </div>
+      ))}
+    </div>
+
+    <div class="mt-12 text-center font-sans text-sm text-ink-light">
+      <p>{sorted.length} entries &middot; Growing collection</p>
+    </div>
+  </div>
+</BaseLayout>

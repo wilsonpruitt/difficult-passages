@@ -1,0 +1,56 @@
+---
+interface Props {
+  categories: string[];
+}
+
+const { categories } = Astro.props;
+---
+
+<div class="flex flex-wrap gap-2 font-sans text-sm" id="category-filter">
+  <button
+    data-category="all"
+    class="filter-btn px-3 py-1.5 rounded-full border border-gold/30 text-ink-light hover:border-gold hover:text-gold transition-colors active"
+  >
+    All
+  </button>
+  {categories.map((cat) => (
+    <button
+      data-category={cat}
+      class="filter-btn px-3 py-1.5 rounded-full border border-gold/30 text-ink-light hover:border-gold hover:text-gold transition-colors"
+    >
+      {cat}
+    </button>
+  ))}
+</div>
+
+<script>
+  document.addEventListener('astro:page-load', () => {
+    const buttons = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+    const cards = document.querySelectorAll<HTMLElement>('[data-category-card]');
+
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const cat = btn.dataset.category;
+
+        buttons.forEach((b) => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        cards.forEach((card) => {
+          if (cat === 'all' || card.dataset.categoryCard === cat) {
+            card.style.display = '';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+  });
+</script>
+
+<style>
+  .filter-btn.active {
+    background-color: var(--color-gold);
+    color: white;
+    border-color: var(--color-gold);
+  }
+</style>
