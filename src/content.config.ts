@@ -17,6 +17,7 @@ const difficulties = defineCollection({
       'Prophets',
       'Gospels / Textual Criticism',
       'Gospels / Theology',
+      'Epistles / Textual Criticism',
       'Acts / Theology',
     ]),
     passages: z.string(),
